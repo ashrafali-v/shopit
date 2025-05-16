@@ -15,30 +15,27 @@
           </span>
         </div>
       </div>
+      <button 
+        @click="addToCart" 
+        class="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+      >
+        Add to Cart
+      </button>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { Product } from '~/types'
-import { useCartStore } from '~/store/cart'
+<script setup lang="ts">
+import type { Product } from '../types'
+import { useCartStore } from '../store/cart'
 
-export default defineComponent({
-  props: {
-    product: {
-      type: Object as PropType<Product>,
-      required: true
-    }
-  },
-  setup(props) {
-    const cartStore = useCartStore()
+const props = defineProps<{
+  product: Product
+}>()
 
-    const addToCart = () => {
-      cartStore.addToCart(props.product)
-    }
+const cartStore = useCartStore()
 
-    return { addToCart }
-  }
-})
+const addToCart = () => {
+  cartStore.addToCart(props.product)
+}
 </script>

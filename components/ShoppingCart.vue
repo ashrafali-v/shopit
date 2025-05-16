@@ -34,61 +34,50 @@
           </button>
         </div>
 
-        <div v-if="cartStore.items.length === 0" class="text-center py-8">
-          <p class="text-gray-500">Your cart is empty</p>
+        <div v-if="cartStore.items.length === 0" class="text-gray-500 text-center py-8">
+          Your cart is empty
         </div>
 
         <div v-else class="space-y-4">
-          <!-- Cart Items -->
           <div 
             v-for="item in cartStore.items" 
             :key="item.id" 
-            class="flex items-center space-x-4"
+            class="flex items-center justify-between gap-4"
           >
-            <img 
-              :src="item.image" 
-              :alt="item.name" 
-              class="h-16 w-16 object-cover rounded"
-            >
-            <div class="flex-1">
-              <h4 class="font-medium">{{ item.name }}</h4>
-              <p class="text-gray-500">${{ item.price.toFixed(2) }}</p>
-              <div class="flex items-center space-x-2 mt-1">
-                <button 
-                  @click="updateQuantity(item.id, item.quantity - 1)"
-                  class="text-gray-500 hover:text-gray-700"
-                >
-                  -
-                </button>
-                <span>{{ item.quantity }}</span>
-                <button 
-                  @click="updateQuantity(item.id, item.quantity + 1)"
-                  class="text-gray-500 hover:text-gray-700"
-                >
-                  +
-                </button>
+            <div class="flex items-center gap-4">
+              <img :src="item.image" :alt="item.title" class="w-16 h-16 object-cover rounded">
+              <div>
+                <h4 class="font-medium">{{ item.title }}</h4>
+                <p class="text-gray-500">${{ item.price.toFixed(2) }} × {{ item.quantity }}</p>
               </div>
             </div>
-            <button 
-              @click="removeFromCart(item.id)"
-              class="text-red-500 hover:text-red-700"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-              </svg>
-            </button>
+            <div class="flex items-center gap-2">
+              <button 
+                @click="cartStore.decrementQuantity(item.id)" 
+                class="p-1 text-gray-500 hover:text-gray-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <span class="text-gray-600 w-4 text-center">{{ item.quantity }}</span>
+              <button 
+                @click="cartStore.incrementQuantity(item.id)" 
+                class="p-1 text-gray-500 hover:text-gray-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
           </div>
 
-          <!-- Cart Footer -->
-          <div class="border-t pt-4">
-            <div class="flex justify-between mb-2">
+          <div class="border-t pt-4 mt-4">
+            <div class="flex justify-between font-semibold mb-2">
               <span>Total:</span>
-              <span class="font-semibold">${{ cartStore.totalPrice.toFixed(2) }}</span>
+              <span>${{ cartStore.totalPrice.toFixed(2) }}</span>
             </div>
-            <button 
-              @click="checkout"
-              class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-            >
+            <button class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
               Checkout
             </button>
           </div>
@@ -98,42 +87,14 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { useCartStore } from '~/store/cart'
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useCartStore } from '../store/cart'
 
-export default defineComponent({
-  setup() {
-    const cartStore = useCartStore()
-    const showCart = ref(false)
+const showCart = ref(false)
+const cartStore = useCartStore()
 
-    const toggleCart = () => {
-      showCart.value = !showCart.value
-    }
-
-    const updateQuantity = (productId: number, quantity: number) => {
-      cartStore.updateQuantity(productId, quantity)
-    }
-
-    const removeFromCart = (productId: number) => {
-      cartStore.removeFromCart(productId)
-    }
-
-    const checkout = () => {
-      // Implement checkout logic here
-      alert('Checkout functionality coming soon!')
-      cartStore.clearCart()
-      showCart.value = false
-    }
-
-    return {
-      cartStore,
-      showCart,
-      toggleCart,
-      updateQuantity,
-      removeFromCart,
-      checkout
-    }
-  }
-})
+const toggleCart = () => {
+  showCart.value = !showCart.value
+}
 </script>

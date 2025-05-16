@@ -79,8 +79,9 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { useCartStore } from '~/store/cart'
+<script setup lang="ts">
+import type { Product } from '@/types'
+import { useCartStore } from '@/store/cart'
 
 const route = useRoute()
 const cartStore = useCartStore()
@@ -95,7 +96,12 @@ const { data: product, pending: loading, error, refresh } = await useFetch<Produ
   timeout: 10000,
   onResponseError({ response }) {
     const message = response?._data?.message || 'Failed to fetch product'
-    throw createError({ statusCode: response?.status || 500, message })
+    const statusCode = response?.status || 500
+    throw createError({ 
+      statusCode, 
+      message,
+      fatal: statusCode >= 500
+    })
   }
 })
 

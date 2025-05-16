@@ -1,11 +1,6 @@
 import { defineStore } from 'pinia'
 
-interface Product {
-  id: number
-  name: string
-  price: number
-  image: string
-}
+import type { Product } from '../types'
 
 interface CartItem extends Product {
   quantity: number
@@ -47,6 +42,24 @@ export const useCartStore = defineStore('cart', {
       if (item) {
         if (quantity > 0) {
           item.quantity = quantity
+        } else {
+          this.removeFromCart(productId)
+        }
+      }
+    },
+
+    incrementQuantity(productId: number) {
+      const item = this.items.find((item: CartItem) => item.id === productId)
+      if (item) {
+        item.quantity++
+      }
+    },
+
+    decrementQuantity(productId: number) {
+      const item = this.items.find((item: CartItem) => item.id === productId)
+      if (item) {
+        if (item.quantity > 1) {
+          item.quantity--
         } else {
           this.removeFromCart(productId)
         }
